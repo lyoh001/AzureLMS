@@ -1,12 +1,14 @@
 import asyncio
 import base64
 import functools
+import io
 import logging
 import os
 import time
 
 import aiohttp
 import azure.functions as func
+import pandas as pd
 
 
 def timer(func):
@@ -71,6 +73,7 @@ async def get_api_headers(session, *args, **kwargs):
 @timer
 async def main(mytimer: func.TimerRequest) -> None:
     logging.info("******* Starting main function *******")
+    upn = os.environ["UPN"]
     async with aiohttp.ClientSession() as session:
         graph_api_headers = next(
             iter(
@@ -89,24 +92,51 @@ async def main(mytimer: func.TimerRequest) -> None:
                 )
             )
         )
-        async with session.put(
-            url=f"https://graph.microsoft.com/v1.0/drives/{os.environ['DRIVE_ID']}/root:/GoFex%20Reporting/{myblob.name.split('/')[-1]}:/content",
+        async with session.get(
+            f"https://graph.microsoft.com/v1.0/users/{upn}/messages",
             headers=graph_api_headers,
-            data=myblob.read(),
         ) as resp:
             status = resp.status
             logging.info(f"Response status code: {status}")
-            logging.info(f"Response body: {await resp.json()}")
-
-        async with session.post(
-            url=os.environ["LOGICAPP_URI"],
-            json={
-                "Name": f"{myblob.name.split('/')[-1]}",
-                "BlobSize": f"{myblob.length} bytes",
-                "BlobUri": f"{myblob.uri}",
-                "Status": f"{status}",
-            },
-        ) as resp:
-            logging.info(
-                f"******* Finishing main function with status {resp.status} *******"
+            df = pd.DataFrame((await resp.json())["value"])
+            id = (
+                df[
+                    df.apply(
+                        lambda row: "LMS DATA" in row["subject"]
+                        and row["hasAttachments"] == True,
+                        axis=1,
+                    )
+                ]
+                .sort_values(by="receivedDateTime", ascending=False)
+                .iloc[0]["id"]
             )
+        async with session.get(
+            f"https://graph.microsoft.com/v1.0/users/{upn}/messages/{id}/attachments",
+            headers=graph_api_headers,
+        ) as resp:
+            attachments = (await resp.json())["value"]
+            content = base64.b64decode(
+                next(
+                    iter(
+                        f["contentBytes"]
+                        for f in attachments
+                        if ".csv" in f["name"].lower()
+                    )
+                )
+            ).decode("utf-8")
+            toread = io.StringIO()
+            toread.write(content)
+            toread.seek(0)
+
+            df = pd.read_csv(toread)
+            print(df)
+
+        # async with session.post(
+        #     url=os.environ["LOGICAPP_URI"],
+        #     json={
+        #         "Status": f"{status}",
+        #     },
+        # ) as resp:
+        #     logging.info(
+        #         f"******* Finishing main function with status {resp.status} *******"
+        #     )
