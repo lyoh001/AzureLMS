@@ -71,7 +71,7 @@ async def get_api_headers(session, *args, **kwargs):
 
 
 @timer
-async def main(mytimer: func.TimerRequest) -> None:
+async def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("******* Starting main function *******")
     upn = os.environ["UPN"]
     async with aiohttp.ClientSession() as session:
@@ -140,3 +140,4 @@ async def main(mytimer: func.TimerRequest) -> None:
         #     logging.info(
         #         f"******* Finishing main function with status {resp.status} *******"
         #     )
+    return func.HttpResponse("Success", status_code=200)

@@ -8,8 +8,8 @@ This document is intended to provide a high level overview of workflow on how th
 
 Included in this report is a step by step detailed guide around where to look for troubleshooting.
 
-## 2 Go Fex Sharepoint Integration Process Reports
-- Description: MS Sharepoint integration from the on-prem server..
+## 2 LMS Integration Process Reports
+- Description: Fetching outlook mail attachment from the mailbox and copy them to the on-prem server..
 - Priority: 3
 - Owners: Tier 0
 
