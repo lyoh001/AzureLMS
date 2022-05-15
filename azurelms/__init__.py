@@ -9,6 +9,7 @@ import time
 import aiohttp
 import azure.functions as func
 import pandas as pd
+from azure.storage.blob import BlobClient
 
 
 def timer(func):
@@ -127,17 +128,20 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
             toread = io.StringIO()
             toread.write(content)
             toread.seek(0)
-
             df = pd.read_csv(toread)
-            print(df)
 
-        # async with session.post(
-        #     url=os.environ["LOGICAPP_URI"],
-        #     json={
-        #         "Status": f"{status}",
-        #     },
-        # ) as resp:
-        #     logging.info(
-        #         f"******* Finishing main function with status {resp.status} *******"
-        #     )
-    return func.HttpResponse("Success", status_code=200)
+            blob_client = BlobClient.from_connection_string(
+                conn_str=os.environ["STORAGE_ACCT_APP_SETTING"],
+                container_name="azurelmsstrg",
+                blob_name="LMS DATA 1.csv",
+            )
+            try:
+                blob_client.upload_blob(df.to_csv(index=False), overwrite=True)
+                logging.info("******* Finishing main function with status 200 *******")
+                return func.HttpResponse("Success", status_code=200)
+
+            except Exception as e:
+                logging.info(
+                    f"******* Finishing main function with status 500 *******\n{e}"
+                )
+                return func.HttpResponse(f"Error: {e}", status_code=500)
