@@ -2,9 +2,11 @@
 ## 1. Introduction
 ### 1.1	Overview
 
-A number of challenges arise when managing AAD roles across multiple tenants, Hosting Services team have been working to make this process easier to maintain with less administrative overhead.
+A Script runs from on-prem server every weekday at 8:15AM, to get the LMS Data attachment from the mailbox. The script connects to the mailbox using service account, however the script fails at the "extract the attachment process".
 
-This document is intended to provide a high level overview of workflow on how the automation transfers files from Gofex SFT client to Sharepoint dir https://****.sharepoint.com/sites/****/****/Technical Documents/GoFex Reporting and notifies the admins with job status alert email.
+The script has been running fine for years and recently the exchange connection attempt fails.
+
+This document is intended to provide a high level overview of workflow on how the automation transfers attachment files from the mailbox to onprem server and notifies the admins with job status alert email.
 
 Included in this report is a step by step detailed guide around where to look for troubleshooting.
 
@@ -30,5 +32,5 @@ Included in this report is a step by step detailed guide around where to look fo
 
 This project is used by the following teams:
 
-- BAS
+- OD Learning
 - Cloud Platform
