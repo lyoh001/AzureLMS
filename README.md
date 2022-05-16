@@ -23,8 +23,8 @@ Included in this report is a step by step detailed guide around where to look fo
 1. The function will auth via managed identity against Azure AD and retrieves API credentials from Azure Keyvault that is secured under T0 subscription.
 1. SPN has permission to retrieve an attachment from a given mailbox.
 1. The function will then retrieve the attachment from the mailbox and save it to a storage account.
-1. The function will invoke an automation account runbook via a webhook post call.
-1. Hybridworker will excute a powershell and mount a storage on on-prem server.
+1. The Logicapp will invoke an automation account runbook via a webhook HTTP post call.
+1. Azure Arc Hybridworker will excute a powershell and mount a storage on on-prem server.
 1. Powershell will then copy the file from the storage account to the mounted drive via Azcopy.
 1. Logic app will send the end user a notification of workflow status.
 

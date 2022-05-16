@@ -137,6 +137,7 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
             )
             try:
                 blob_client.upload_blob(df.to_csv(index=False), overwrite=True)
+                
                 logging.info("******* Finishing main function with status 200 *******")
                 return func.HttpResponse("Success", status_code=200)
 
