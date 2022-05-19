@@ -8,7 +8,11 @@ The script has been running fine for years and recently the exchange connection 
 
 This document is intended to provide a high level overview of workflow on how the automation transfers attachment files from the mailbox to onprem server and notifies the admins with job status alert email.
 
-Included a step by step detailed analysis around identifying the root cause of the script to fail. (ref: https://github.com/lyoh001/AzureLMS/blob/main/analysis/analysis_eda.ipynb)
+Included a step by step detailed analysis notebook around identifying the root cause of the script to fail. (ref: https://github.com/lyoh001/AzureLMS/blob/main/analysis/analysis_eda.ipynb)
+
+
+![Figure 1: Powerbi Dashboard](./.images/dashboard.png)
+(ref: https://github.com/lyoh001/AzureLMS/blob/main/analysis/powerbi_dashboard.pdf)
 
 ## 2 LMS Integration Process Reports
 - Description: Fetching outlook mail attachment from the mailbox and copy them to the on-prem server..
